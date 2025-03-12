@@ -6,6 +6,7 @@ import { useOrdersSync } from "@/hooks/use-orders-sync";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Power } from "lucide-react";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 export default function OrdersPage() {
   const { isSyncing, toggleSync } = useOrdersSync();
@@ -35,15 +36,28 @@ export default function OrdersPage() {
             <Button
               variant={isSyncing ? "default" : "outline"}
               onClick={toggleSync}
+              className={cn(
+                "transition-colors",
+                isSyncing &&
+                  "bg-primary text-primary-foreground hover:bg-primary/90",
+                !isSyncing && "hover:bg-muted"
+              )}
             >
               <Power
-                className={`mr-2 h-4 w-4 ${isSyncing ? "text-green-500" : ""}`}
+                className={cn(
+                  "mr-2 h-4 w-4",
+                  isSyncing ? "text-primary-foreground" : "text-foreground"
+                )}
               />
               Sync {isSyncing ? "On" : "Off"}
             </Button>
-            <Button onClick={handleImport} disabled={isImporting}>
+            <Button
+              onClick={handleImport}
+              disabled={isImporting}
+              className="bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
+            >
               <RefreshCw
-                className={`mr-2 h-4 w-4 ${isImporting ? "animate-spin" : ""}`}
+                className={cn("mr-2 h-4 w-4", isImporting && "animate-spin")}
               />
               {isImporting ? "Importing..." : "Import Orders"}
             </Button>
