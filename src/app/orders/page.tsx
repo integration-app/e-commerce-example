@@ -8,8 +8,8 @@ import { RefreshCw, Power } from "lucide-react";
 import { useState } from "react";
 
 export default function OrdersPage() {
-  const { orders, isLoading, isError, importOrders } = useOrders();
   const { isSyncing, toggleSync } = useOrdersSync();
+  const { orders, isLoading, isError, importOrders } = useOrders(isSyncing);
   const [isImporting, setIsImporting] = useState(false);
 
   const handleImport = async () => {

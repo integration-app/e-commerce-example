@@ -2,13 +2,19 @@ import useSWR from "swr";
 import { OrdersResponse } from "@/types/order";
 import { authenticatedFetcher, getAuthHeaders } from "@/lib/fetch-utils";
 
-export function useOrders() {
+export function useOrders(isSync = false) {
   const { data, error, isLoading, mutate } = useSWR<OrdersResponse>(
     "/api/orders",
     (url) => authenticatedFetcher<OrdersResponse>(url),
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
+      // Poll every 5 seconds when sync is ON
+      refreshInterval: isSync ? 5000 : 0,
+      // Don't poll when tab is hidden
+      refreshWhenHidden: false,
+      // Deduplicate requests within 2 seconds
+      dedupingInterval: 2000,
     }
   );
 
