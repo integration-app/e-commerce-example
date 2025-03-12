@@ -129,7 +129,6 @@ export async function POST(request: NextRequest) {
 
     // Get Integration.app client
     const client = await getIntegrationClient(auth);
-    // console.log(JSON.stringify(body, null, 2));
     try {
       // Update order in Square via Integration.app
       const result = await client
@@ -140,6 +139,7 @@ export async function POST(request: NextRequest) {
           id: body.externalOrderId,
           fulfillments: {
             type: "SHIPMENT",
+            uid: body.data.rawFields.fulfillments[0].uid,
             shipment_details: {
               tracking_number: generateTrackingNumber(),
               recipient: {
@@ -148,7 +148,6 @@ export async function POST(request: NextRequest) {
             },
           },
         });
-      console.log(JSON.stringify(result, null, 2));
       return NextResponse.json(result.output, { status: 200 });
     } catch (apiError) {
       console.error("Integration.app API Error:", {

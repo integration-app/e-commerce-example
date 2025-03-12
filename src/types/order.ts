@@ -10,13 +10,20 @@ interface LineItem {
   total_price: Money;
 }
 
+interface Address {
+  address_line_1: string;
+  country: string;
+}
+
 interface Recipient {
   display_name: string;
+  address: Address;
 }
 
 interface ShipmentDetails {
   recipient: Recipient;
   tracking_number: string;
+  shipping_note?: string;
 }
 
 interface Fulfillment {

@@ -9,7 +9,7 @@ export function useOrders(isSync = false) {
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
-      // Poll every 5 seconds when sync is ON
+      // Poll every 10 seconds when sync is ON
       refreshInterval: isSync ? 10000 : 0,
       // Don't poll when tab is hidden
       refreshWhenHidden: false,

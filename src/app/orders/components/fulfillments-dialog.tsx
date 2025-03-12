@@ -34,6 +34,19 @@ export function FulfillmentsDialog({
     }).format(amount);
   };
 
+  const calculateUnitPrice = (total: number, quantity: string) => {
+    return total / parseInt(quantity);
+  };
+
+  const calculateTotalPrice = () => {
+    return order.fields.line_items.reduce((sum, item) => {
+      return sum + item.total_price.amount;
+    }, 0);
+  };
+
+  const totalOrderPrice = calculateTotalPrice();
+  const currency = order.fields.line_items[0]?.total_price.currency || "USD";
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl bg-background text-foreground">
@@ -49,14 +62,17 @@ export function FulfillmentsDialog({
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-muted/50">
-                  <TableHead className="text-foreground w-[50%]">
+                  <TableHead className="text-foreground w-[40%]">
                     Name
                   </TableHead>
                   <TableHead className="text-foreground text-center">
                     Quantity
                   </TableHead>
                   <TableHead className="text-foreground text-right">
-                    Total Price
+                    Unit Price
+                  </TableHead>
+                  <TableHead className="text-foreground text-right">
+                    Total
                   </TableHead>
                   <TableHead className="text-foreground">Item ID</TableHead>
                 </TableRow>
@@ -75,6 +91,15 @@ export function FulfillmentsDialog({
                     </TableCell>
                     <TableCell className="text-foreground text-right">
                       {formatPrice(
+                        calculateUnitPrice(
+                          item.total_price.amount,
+                          item.quantity
+                        ),
+                        item.total_price.currency
+                      )}
+                    </TableCell>
+                    <TableCell className="text-foreground text-right">
+                      {formatPrice(
                         item.total_price.amount,
                         item.total_price.currency
                       )}
@@ -86,6 +111,16 @@ export function FulfillmentsDialog({
                 ))}
               </TableBody>
             </Table>
+            <div className="mt-6 border-t pt-4">
+              <div className="flex justify-end items-center gap-4">
+                <span className="text-base font-semibold text-foreground">
+                  Order Total:
+                </span>
+                <span className="text-lg font-bold text-foreground">
+                  {formatPrice(totalOrderPrice, currency)}
+                </span>
+              </div>
+            </div>
           </div>
 
           {/* Fulfillments Section */}
@@ -94,13 +129,12 @@ export function FulfillmentsDialog({
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-muted/50">
-                  <TableHead className="text-foreground">UUID</TableHead>
                   <TableHead className="text-foreground">Type</TableHead>
                   <TableHead className="text-foreground">State</TableHead>
                   <TableHead className="text-foreground">Customer</TableHead>
-                  <TableHead className="text-foreground">
-                    Tracking Number
-                  </TableHead>
+                  <TableHead className="text-foreground">Address</TableHead>
+                  <TableHead className="text-foreground">Tracking</TableHead>
+                  <TableHead className="text-foreground">Notes</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -109,9 +143,6 @@ export function FulfillmentsDialog({
                     key={fulfillment.uuid}
                     className="hover:bg-muted/50 transition-colors"
                   >
-                    <TableCell className="font-mono text-sm text-muted-foreground">
-                      {fulfillment.uuid}
-                    </TableCell>
                     <TableCell className="text-foreground">
                       {fulfillment.type}
                     </TableCell>
@@ -122,7 +153,26 @@ export function FulfillmentsDialog({
                       {fulfillment.shippment_details.recipient.display_name}
                     </TableCell>
                     <TableCell className="text-foreground">
+                      <div className="space-y-1">
+                        <div>
+                          {
+                            fulfillment.shippment_details.recipient.address
+                              .address_line_1
+                          }
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {
+                            fulfillment.shippment_details.recipient.address
+                              .country
+                          }
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-foreground font-mono text-sm">
                       {fulfillment.shippment_details.tracking_number}
+                    </TableCell>
+                    <TableCell className="text-foreground text-sm text-muted-foreground">
+                      {fulfillment.shippment_details.shipping_note}
                     </TableCell>
                   </TableRow>
                 ))}
