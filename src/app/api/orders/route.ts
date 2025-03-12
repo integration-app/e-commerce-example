@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
         .run({
           version: body.data.rawFields.version,
           id: body.externalOrderId,
-          fullfilments: {
+          fulfillments: {
             type: "SHIPMENT",
             shipment_details: {
               tracking_number: generateTrackingNumber(),
