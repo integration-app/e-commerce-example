@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import Image from "next/image"
-import { useState, useEffect } from "react"
-import { useTheme } from "next-themes"
-import { Sun, Moon } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import Image from "next/image";
+import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
+import { Sun, Moon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function Header() {
-  const [mounted, setMounted] = useState(false)
-  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm">
@@ -48,6 +48,12 @@ export function Header() {
               >
                 Users
               </Link>
+              <Link
+                href="/orders"
+                className="inline-flex items-center px-1 pt-1 text-sm font-medium"
+              >
+                Orders
+              </Link>
             </div>
           </div>
           <div className="flex items-center">
@@ -69,5 +75,5 @@ export function Header() {
         </div>
       </nav>
     </header>
-  )
+  );
 }
