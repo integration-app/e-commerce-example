@@ -45,65 +45,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function PUT(request: NextRequest) {
-  try {
-    // Try Integration.app token first
-    const integrationAppAuth = await verifyIntegrationAppToken(request);
-    if (!integrationAppAuth?.sub) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const body = await request.json();
-    if (!body.externalOrderId || !body.data) {
-      return NextResponse.json(
-        { error: "externalOrderId and data are required" },
-        { status: 400 }
-      );
-    }
-
-    // Get Integration.app client with the customer ID from the token
-    const auth = {
-      customerId: integrationAppAuth.sub,
-      customerName:
-        (integrationAppAuth.fields?.name as string) || integrationAppAuth.sub,
-    };
-
-    // Get Integration.app client
-    const client = await getIntegrationClient(auth);
-
-    try {
-      // Update order in Square via Integration.app
-      const result = await client
-        .connection("square")
-        .action("update-order")
-        .run({
-          orderId: body.externalOrderId,
-          trackingNumber: generateTrackingNumber(),
-        });
-
-      return NextResponse.json(result.output, { status: 200 });
-    } catch (apiError) {
-      console.error("Integration.app API Error:", {
-        error: apiError,
-        requestBody: {
-          orderId: body.externalOrderId,
-          orderDataId: body.data?.id,
-        },
-      });
-      return NextResponse.json(
-        { error: "Failed to connect to Integration.app service" },
-        { status: 503 }
-      );
-    }
-  } catch (error) {
-    console.error("Error updating order:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
-}
-
 export async function POST(request: NextRequest) {
   try {
     // Try Integration.app token first
